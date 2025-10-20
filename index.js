@@ -2661,6 +2661,57 @@ app.get('/all-donation-campaigns', async (req, res) => {
     }
 });
 
+//admin profile api 
+// ✅ Admin Profile API
+// Get logged-in admin profile
+app.get('/admin/profile/:email', async (req, res) => {
+  try {
+    const email = req.params.email;
+    const user = await usersCollection.findOne({ email, role: 'admin' });
+    if (!user) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+    const adminData = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      photo: user.photo || user.photoURL || null,
+    };
+    res.status(200).json(adminData);
+  } catch (error) {
+    console.error("GET /admin/profile/:email error:", error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+
+
+
+//end admin profile api
+// Get user profile by email
+
+// ✅ All donation campaigns (for Overview)
+app.get('/all-donation-campaigns', async (req, res) => {
+  try {
+    const campaigns = await donationCampaignsCollection.find({}).toArray();
+    res.status(200).json(campaigns);
+  } catch (error) {
+    console.error("GET /all-donation-campaigns error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// ✅ All adoption requests (for Overview)
+app.get('/all-adoption-requests', async (req, res) => {
+  try {
+    const adoptions = await adoptionRequestsCollection.find({}).toArray();
+    res.status(200).json(adoptions);
+  } catch (error) {
+    console.error("GET /all-adoption-requests error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 
         // Root route
